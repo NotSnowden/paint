@@ -41,19 +41,19 @@ public class DrawDots implements MouseInputListener  {
         label.setFont(font);
         label.setHorizontalAlignment(JLabel.CENTER);
 
-        dimensionIcon = new ImageIcon("PaintTarocco/media/dimension.png");
+        dimensionIcon = new ImageIcon("media/dimension.png");
         radiusBtn = new JButton(dimensionIcon);
 
-        shapeIcon = new ImageIcon("PaintTarocco/media/shape.png");
+        shapeIcon = new ImageIcon("media/shape.png");
         shapeBtn = new JButton(shapeIcon);
 
-        colorIcon = new ImageIcon("PaintTarocco/media/color.png");
+        colorIcon = new ImageIcon("media/color.png");
         colorBtn = new JButton(colorIcon);
 
-        eraserIcon = new ImageIcon("PaintTarocco/media/eraser.png");
+        eraserIcon = new ImageIcon("media/eraser.png");
         eraserBtn = new JButton(eraserIcon);
 
-        resetIcon = new ImageIcon("PaintTarocco/media/reset.png");
+        resetIcon = new ImageIcon("media/reset.png");
         resetBtn = new JButton(resetIcon);
 
         c.anchor = GridBagConstraints.CENTER;
