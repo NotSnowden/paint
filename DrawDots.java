@@ -3,8 +3,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.util.Random;
-
 import java.awt.image.BufferedImage;
+import javax.swing.filechooser.*;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -23,10 +23,9 @@ public class DrawDots implements MouseInputListener {
     Random rand = new Random();
     String[] shapes = { "linea", "quadrato vuoto", "cerchio vuoto", "quadrato pieno", "cerchio pieno" };
     String shape = "linea";
-    ActionListener action;
 
     public DrawDots() {
-        frame = new JFrame("Paint tarocco");
+        frame = new JFrame("Paint meno tarocco");
         font = new Font(Font.SERIF, Font.BOLD, 30);
 
         mainPanel = new JPanel(new BorderLayout());
@@ -116,7 +115,7 @@ public class DrawDots implements MouseInputListener {
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                int confirm = JOptionPane.showConfirmDialog(mainPanel, "Sicuro di voler chiudere Paint tarocco?");
+                int confirm = JOptionPane.showConfirmDialog(mainPanel, "Sicuro di voler chiudere Paint meno tarocco?");
 
                 if (confirm == 0)
                     System.exit(0);
@@ -180,16 +179,22 @@ public class DrawDots implements MouseInputListener {
     }
 
     public void setImage() {
-        String input = JOptionPane.showInputDialog(mainPanel, "Inserisci il percorso dell'immagine!",
-        "Immagine", JOptionPane.INFORMATION_MESSAGE);
+        JFileChooser fc = new JFileChooser();
+        FileFilter filter = new FileNameExtensionFilter("JPEG or PNG file", new String[] {"jpg", "jpeg", "png"});
+        fc.setFileFilter(filter);
+        fc.setAcceptAllFileFilterUsed(false);
 
-        if (input == null)
+        int input = fc.showOpenDialog(mainPanel);
+
+        if (input != JFileChooser.APPROVE_OPTION)
             return;
 
+        File file = fc.getSelectedFile();
+
         try {
-            image = ImageIO.read(new File(input));
+            image = ImageIO.read(file);
         } catch (IOException ex) {
-            label.setText("File non trovato :(");
+            label.setText("Problema con l'apertura del file :(");
             return;
         }
 
