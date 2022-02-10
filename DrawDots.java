@@ -1,5 +1,3 @@
-package PaintMenoTarocco;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -47,22 +45,22 @@ public class DrawDots implements MouseInputListener {
         label.setFont(font);
         label.setHorizontalAlignment(JLabel.CENTER);
 
-        dimensionIcon = new ImageIcon("PaintMenoTarocco/media/dimension.png");
+        dimensionIcon = new ImageIcon("media/dimension.png");
         radiusBtn = new JButton(dimensionIcon);
 
-        shapeIcon = new ImageIcon("PaintMenoTarocco/media/shape.png");
+        shapeIcon = new ImageIcon("media/shape.png");
         shapeBtn = new JButton(shapeIcon);
 
-        colorIcon = new ImageIcon("PaintMenoTarocco/media/color.png");
+        colorIcon = new ImageIcon("media/color.png");
         colorBtn = new JButton(colorIcon);
 
-        eraserIcon = new ImageIcon("PaintMenoTarocco/media/eraser.png");
+        eraserIcon = new ImageIcon("media/eraser.png");
         eraserBtn = new JButton(eraserIcon);
 
-        imageIcon = new ImageIcon("PaintMenoTarocco/media/image.png");
+        imageIcon = new ImageIcon("media/image.png");
         imageBtn = new JButton(imageIcon);
 
-        resetIcon = new ImageIcon("PaintMenoTarocco/media/reset.png");
+        resetIcon = new ImageIcon("media/reset.png");
         resetBtn = new JButton(resetIcon);
 
         c.anchor = GridBagConstraints.CENTER;
