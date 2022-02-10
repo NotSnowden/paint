@@ -1,60 +1,72 @@
+package PaintMenoTarocco;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.util.Random;
 
-public class DrawDots implements MouseInputListener  {
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+
+public class DrawDots implements MouseInputListener {
     JFrame frame;
     JPanel drawPanel, inputPanel, mainPanel;
     JLabel label;
-    JButton radiusBtn, shapeBtn, colorBtn, eraserBtn, resetBtn;
-    Icon dimensionIcon, shapeIcon, colorIcon, eraserIcon, resetIcon;
+    JButton radiusBtn, shapeBtn, colorBtn, eraserBtn, imageBtn, resetBtn;
+    Icon dimensionIcon, shapeIcon, colorIcon, eraserIcon, imageIcon, resetIcon;
+    BufferedImage image;
     Font font;
     int oldx, oldy, x, y, radius = 10;
-    boolean reset = false, eraser = false;
+    boolean reset = false, eraser = false, img = false;
     Color color = Color.BLACK;
     Random rand = new Random();
     String[] shapes = { "linea", "quadrato vuoto", "cerchio vuoto", "quadrato pieno", "cerchio pieno" };
     String shape = "linea";
+    ActionListener action;
 
     public DrawDots() {
         frame = new JFrame("Paint tarocco");
         font = new Font(Font.SERIF, Font.BOLD, 30);
 
         mainPanel = new JPanel(new BorderLayout());
-        
+
         inputPanel = new JPanel(new GridBagLayout());
         inputPanel.setBorder(BorderFactory.createLineBorder(Color.black));
         inputPanel.setBackground(Color.lightGray);
 
         GridBagConstraints c = new GridBagConstraints();
-        
+
         drawPanel = new GPanel();
         drawPanel.addMouseListener(this);
         drawPanel.addMouseMotionListener(this);
 
-        label = new JLabel("Benvenuto nel Paint tarocco!");  
+        label = new JLabel("Benvenuto nel Paint meno tarocco!");
         label.setFont(font);
         label.setHorizontalAlignment(JLabel.CENTER);
 
-        dimensionIcon = new ImageIcon("media/dimension.png");
+        dimensionIcon = new ImageIcon("PaintMenoTarocco/media/dimension.png");
         radiusBtn = new JButton(dimensionIcon);
 
-        shapeIcon = new ImageIcon("media/shape.png");
+        shapeIcon = new ImageIcon("PaintMenoTarocco/media/shape.png");
         shapeBtn = new JButton(shapeIcon);
 
-        colorIcon = new ImageIcon("media/color.png");
+        colorIcon = new ImageIcon("PaintMenoTarocco/media/color.png");
         colorBtn = new JButton(colorIcon);
 
-        eraserIcon = new ImageIcon("media/eraser.png");
+        eraserIcon = new ImageIcon("PaintMenoTarocco/media/eraser.png");
         eraserBtn = new JButton(eraserIcon);
 
-        resetIcon = new ImageIcon("media/reset.png");
+        imageIcon = new ImageIcon("PaintMenoTarocco/media/image.png");
+        imageBtn = new JButton(imageIcon);
+
+        resetIcon = new ImageIcon("PaintMenoTarocco/media/reset.png");
         resetBtn = new JButton(resetIcon);
 
         c.anchor = GridBagConstraints.CENTER;
-        c.gridwidth = 5;
+        c.gridwidth = 6;
         c.insets = new Insets(5, 5, 5, 5);
         inputPanel.add(label, c);
 
@@ -84,6 +96,11 @@ public class DrawDots implements MouseInputListener  {
         c.gridx = 4;
         c.gridy = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
+        inputPanel.add(imageBtn, c);
+
+        c.gridx = 5;
+        c.gridy = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
         inputPanel.add(resetBtn, c);
 
         mainPanel.add(inputPanel, BorderLayout.PAGE_START);
@@ -93,6 +110,7 @@ public class DrawDots implements MouseInputListener  {
         shapeBtn.addActionListener(e -> setShape());
         colorBtn.addActionListener(e -> setColor());
         eraserBtn.addActionListener(e -> enableEraser());
+        imageBtn.addActionListener(e -> setImage());
         resetBtn.addActionListener(e -> resetPanel());
 
         frame.add(mainPanel);
@@ -101,22 +119,22 @@ public class DrawDots implements MouseInputListener  {
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 int confirm = JOptionPane.showConfirmDialog(mainPanel, "Sicuro di voler chiudere Paint tarocco?");
-                
+
                 if (confirm == 0)
                     System.exit(0);
             }
-        });        
-        
+        });
+
         frame.setMinimumSize(new Dimension(800, 500));
         frame.pack();
-        //the screen is positioned in the center of the screen
+        // the screen is positioned in the center of the screen
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
-    //unlike other languages, java sets integers variables equal to zero by default
+    // unlike other languages, java sets integers variables equal to zero by default
     public void setDimension() {
-        String input = JOptionPane.showInputDialog(mainPanel, "Inserisci le dimensioni!", 
+        String input = JOptionPane.showInputDialog(mainPanel, "Inserisci le dimensioni!",
                 "Raggio", JOptionPane.INFORMATION_MESSAGE);
 
         if (input == null)
@@ -130,35 +148,55 @@ public class DrawDots implements MouseInputListener  {
                 label.setText("We campione, mi stai mettendo alla prova?");
                 return;
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             label.setText("Inserire un numero valido");
             return;
-        }                
+        }
     }
 
     public void setShape() {
-        shape = (String)JOptionPane.showInputDialog(mainPanel, "Scegli la forma!", 
-        "Forma", JOptionPane.INFORMATION_MESSAGE, null, shapes, shape);
+        String input = (String) JOptionPane.showInputDialog(mainPanel, "Scegli la forma!",
+                "Forma", JOptionPane.INFORMATION_MESSAGE, null, shapes, shape);
 
-        if (shape == null)
-            shape = "linea";
+        if (input == null)
+            return;
+        
+        shape = input;
     }
 
     public void setColor() {
         Color input = JColorChooser.showDialog(mainPanel, "Scegli il colore!", color);
-        
+
         if (input == null)
             return;
 
         color = input;
-        label.setText("Benvenuto nel Paint tarocco!");
+        label.setText("Benvenuto nel Paint meno tarocco!");
         eraser = false;
     }
 
     public void enableEraser() {
         label.setText("Modalità gomma attiva");
         eraser = true;
+        drawPanel.repaint();
+    }
+
+    public void setImage() {
+        String input = JOptionPane.showInputDialog(mainPanel, "Inserisci il percorso dell'immagine!",
+        "Immagine", JOptionPane.INFORMATION_MESSAGE);
+
+        if (input == null)
+            return;
+
+        try {
+            image = ImageIO.read(new File(input));
+        } catch (IOException ex) {
+            label.setText("File non trovato :(");
+            return;
+        }
+
+        img = true;
+        label.setText("Benvenuto nel Paint meno tarocco!");
         drawPanel.repaint();
     }
 
@@ -169,8 +207,8 @@ public class DrawDots implements MouseInputListener  {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        //eraser is also in the condition since we need to know if the
-        //user is dragging with the eraser tool enabled
+        // eraser is also in the condition since we need to know if the
+        // user is dragging with the eraser tool enabled
         if (!shape.equals("linea") && !eraser)
             return;
 
@@ -191,8 +229,8 @@ public class DrawDots implements MouseInputListener  {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        //if shape is setted to "line" or the eraser tool is enabled, when the user
-        //clicks do nothing
+        // if shape is setted to "line" or the eraser tool is enabled, when the user
+        // clicks do nothing
         if (shape.equals("linea") || eraser)
             return;
 
@@ -203,11 +241,17 @@ public class DrawDots implements MouseInputListener  {
 
     class GPanel extends JPanel {
         public void paint(Graphics g) {
-            Graphics2D g2d = (Graphics2D)g;
+            Graphics2D g2d = (Graphics2D) g;
 
             if (reset) {
                 super.paint(g);
                 reset = false;
+                return;
+            }
+
+            if (img) {
+                g.drawImage(image, drawPanel.getWidth() / 2 - image.getWidth() / 2, drawPanel.getHeight() / 2 - image.getHeight() / 2, null);
+                img = false;
                 return;
             }
 
@@ -217,7 +261,7 @@ public class DrawDots implements MouseInputListener  {
             if (eraser) {
                 if (oldx == 0 && oldy == 0)
                     return;
-                
+
                 g.setColor(drawPanel.getBackground());
                 g.fillOval(x - (radius / 2), y - (radius / 2), radius, radius);
                 g2d.setStroke(new BasicStroke(radius));
@@ -226,14 +270,15 @@ public class DrawDots implements MouseInputListener  {
             }
 
             g.setColor(color);
-            
+
             switch (shape) {
                 case "linea":
                     if (oldx == 0 && oldy == 0)
                         return;
-                    
-                    //if the user moves the mouse too fast, there will be empty space between each point.
-                    //in order to fix this, I draw a line between each point
+
+                    // if the user moves the mouse too fast, there will be empty space between each
+                    // point.
+                    // in order to fix this, I draw a line between each point
                     g.fillOval(x - (radius / 2), y - (radius / 2), radius, radius);
                     g2d.setStroke(new BasicStroke(radius));
                     g2d.drawLine(oldx, oldy, x, y);
@@ -266,15 +311,15 @@ public class DrawDots implements MouseInputListener  {
     };
 
     @Override
-    public void mouseEntered(MouseEvent e) {        
+    public void mouseEntered(MouseEvent e) {
     }
 
     @Override
-    public void mouseExited(MouseEvent e) {        
+    public void mouseExited(MouseEvent e) {
     }
 
     @Override
-    public void mousePressed(MouseEvent arg0) {        
+    public void mousePressed(MouseEvent arg0) {
     }
 
     @Override
