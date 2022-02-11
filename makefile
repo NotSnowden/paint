@@ -12,7 +12,7 @@ JC = javac
 # line, just remove them (these are also just added for readability).
 
 CLASSES = \
-	DrawDots.java
+	Paint.java
 
 default: classes
 
