@@ -1,16 +1,14 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.event.MouseInputListener;
 import java.util.Random;
 import java.awt.image.BufferedImage;
 import javax.swing.filechooser.*;
-
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public class Paint implements MouseInputListener {
+public class Paint extends MouseAdapter {
     JFrame frame;
     JPanel inputPanel, mainPanel;
     GPanel drawPanel;
@@ -18,6 +16,7 @@ public class Paint implements MouseInputListener {
     JButton saveBtn, radiusBtn, shapeBtn, colorBtn, eraserBtn, imageBtn, resetBtn;
     Icon saveIcon, dimensionIcon, shapeIcon, colorIcon, eraserIcon, imageIcon, resetIcon;
     BufferedImage image;
+    Robot robot;
     Font font;
     int oldx, oldy, x, y, radius = 10;
     boolean reset = false, eraser = false, img = false;
@@ -174,7 +173,7 @@ public class Paint implements MouseInputListener {
         }
     }
 
-    // unlike other languages, java sets integers variables equal to zero by default
+    // unlike other languages, java sets int variables equal to zero by default
     public void setDimension() {
         String input = JOptionPane.showInputDialog(mainPanel, "Inserisci le dimensioni!",
                 "Raggio", JOptionPane.INFORMATION_MESSAGE);
@@ -318,14 +317,13 @@ public class Paint implements MouseInputListener {
             }
 
             g.setColor(color);
-
+            
             switch (shape) {
                 case "linea":
                     if (oldx == 0 && oldy == 0)
                         return;
 
-                    // if the user moves the mouse too fast, there will be empty space between each
-                    // point.
+                    // if the user moves the mouse too fast, there will be empty space between points.
                     // in order to fix this, I draw a line between each point
                     g.fillOval(x - (radius / 2), y - (radius / 2), radius, radius);
                     g2d.setStroke(new BasicStroke(radius));
@@ -357,22 +355,6 @@ public class Paint implements MouseInputListener {
             }
         }
     };
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-    }
-
-    @Override
-    public void mousePressed(MouseEvent arg0) {
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent arg0) {
-    }
 
     public static void main(String[] args) {
         new Paint();
